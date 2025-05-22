@@ -10,6 +10,7 @@ import com.example.randommoviessuggestion.model.MovieImagesResponse
 import com.example.randommoviessuggestion.model.MovieSimple
 import com.example.randommoviessuggestion.model.MoviesDetailsResponse
 import com.example.randommoviessuggestion.network.MovieApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.IOException
 import kotlin.random.Random
@@ -21,24 +22,31 @@ sealed interface  MovieUiState{
 }
 
 class MovieViewModel: ViewModel(){
+
     var movieUiState:MovieUiState by mutableStateOf(MovieUiState.Loading)
         private set
 
-    private var enableRefreshState:Boolean by mutableStateOf(true)
+    public var enableRefreshState:Boolean by mutableStateOf(true)
         private set
+
+    private var currentJob: Job? = null
 
     init{
         getMoviePoster()
     }
 
-    private fun getMoviePoster(){
-        if(enableRefreshState == true){
-            enableRefreshState = false
-            viewModelScope.launch {
+    private fun getMoviePoster() {
+        if (currentJob?.isActive == true) {
+            currentJob?.cancel()
+            enableRefreshState = true
+        } else {
+            currentJob = viewModelScope.launch {
+                enableRefreshState = false
                 movieUiState = try {
                     // Get Random Page of the database
                     val numeroRandomPage = Random.nextInt(0, 100) // Número random entre 0 y 99
-                    val listMoviesResult = MovieApi.retrofitService.getMovieDetails(numeroRandomPage).results
+                    val listMoviesResult =
+                        MovieApi.retrofitService.getMovieDetails(numeroRandomPage).results
 
                     // Get Random Title and his Id
                     val numeroRandomMovie = Random.nextInt(0, listMoviesResult.size)
@@ -50,18 +58,19 @@ class MovieViewModel: ViewModel(){
                     val movie = MovieSimple(
                         id = idMovie,
                         title = titleMovie,
-                        posterUrl = posterPathMovie?: "/no-image.jpg"
+                        posterUrl = posterPathMovie ?: "/no-image.jpg"
                     )
 
                     println(movie)
 
                     // Return
                     MovieUiState.Success(movie, listMoviesResult)
-                } catch (e: IOException){
+                } catch (e: IOException) {
                     MovieUiState.Error
+                } finally {
+                    enableRefreshState = true
                 }
             }
-            enableRefreshState = true
         }
     }
 

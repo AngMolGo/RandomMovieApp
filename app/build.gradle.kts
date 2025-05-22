@@ -42,6 +42,7 @@ android {
 
 dependencies {
 
+    // VIEW MODEL DEPENDENCE
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
     implementation(libs.androidx.core.ktx)
@@ -60,7 +61,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-
+    // DEPENDENCIAS PARA CONSUMIR APIs
     //Library Retrofit
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

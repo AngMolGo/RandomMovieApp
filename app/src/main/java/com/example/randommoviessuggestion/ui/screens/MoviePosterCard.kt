@@ -60,7 +60,7 @@ fun MoviePosterCard(movie: MovieSimple, apiResponse: List<Movie>, modifier: Modi
                         placeholder = painterResource(R.drawable.loader),
                         contentScale = ContentScale.Fit
                     )
-                    Text(text = apiResponse.toString(), modifier = Modifier.padding(top = 20.dp))
+                    //Text(text = apiResponse.toString(), modifier = Modifier.padding(top = 20.dp))
                 }
             }
         }

@@ -48,11 +48,14 @@ fun MovieApp(modifier: Modifier = Modifier){
     // Se utiliza una estructura Scaffold para obtener una barra horizontal para alojar el título de la app.
     // Se puede editar para agregar un menu burguer y otras cosas.
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        //modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = { TopAppTitle(scrollBehavior = scrollBehavior) }, // Barra horizontal para el título
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { movieViewModel.refreshMoviePoster() },
+                onClick = {
+                    if (movieViewModel.enableRefreshState){
+                        movieViewModel.refreshMoviePoster() }
+                    },
                 containerColor = colorResource(R.color.RedMovies),
                 shape = CircleShape
                 //modifier = Modifier.size(100.dp)
